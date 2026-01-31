@@ -1,0 +1,46 @@
+═══════════════════════════════════════════════════════════════════════════
+  LAUNDRY MANAGEMENT - FRONTEND (REACT JS)
+═══════════════════════════════════════════════════════════════════════════
+
+## Frontend Development
+
+### 🎯 PHASE 1: INITIAL UI SETUP
+
+#### Design System (Apple Style)
+✔ Setup Vite React project @done(2026-01-31)
+✔ Define global CSS (Colors, Blur, Shadows) @done(2026-01-31)
+✔ Create reusable Apple-style UI components @done(2026-01-31)
+
+### 🎯 PHASE 2: PUBLIC USER EXPERIENCE
+
+#### Customer Flow
+✔ Home Page: Premium landing page @done(2026-01-31)
+✔ Pickup Request Form: Floating glassmorphism UI @done(2026-01-31)
+✔ Status Tracking Page: Visual progress stepper @done(2026-01-31)
+✔ Success View: Tracking ID & WA link @done(2026-01-31)
+
+### 🎯 PHASE 3: ADMIN EXPERIENCE
+
+#### Management Dashboard
+✔ Admin Login: Minimalist auth screen @done(2026-01-31)
+✔ Sidebar & Layout: Modern Apple-inspired UI @done(2026-01-31)
+✔ Orders Dashboard: Stats & Revenue overview @done(2026-01-31)
+✔ Order Management Table: High-fidelity list @done(2026-01-31)
+✔ Order Detail Editor: Interactive status update @done(2026-01-31)
+
+### 🎯 PHASE 4: POLISH
+
+#### UX Enhancement
+✔ Framer Motion transitions @done(2026-01-31)
+✔ Responsive optimization @done(2026-01-31)
+
+### 🎯 PHASE 5: UX IMPROVEMENTS
+
+#### User-Friendly Tracking ID
+☐ Update tracking input placeholder
+☐ Add format helper text
+☐ Update success page dengan ID yang lebih jelas
+☐ Add "Simpan kode ini" reminder
+☐ Update validation untuk format baru
+
+📋 See: tasks/ux-improvements.todo for detailed plan

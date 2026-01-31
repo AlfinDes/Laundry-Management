@@ -1,0 +1,41 @@
+═══════════════════════════════════════════════════════════════════════════
+  LAUNDRY MANAGEMENT - BACKEND (LARAVEL API)
+═══════════════════════════════════════════════════════════════════════════
+
+## API Development
+
+### 🎯 PHASE 1: PROJECT SETUP
+
+#### Base Configuration
+✔ Install Laravel 11 framework @done(2026-01-31)
+✔ Setup Sanctum for Admin Auth @done(2026-01-31)
+✔ Configure CORS for React compatibility @done(2026-01-31)
+
+### 🎯 PHASE 2: CORE API
+
+#### Public Endpoints (Customer)
+✔ POST `/api/orders` - Create pickup request @done(2026-01-31)
+✔ GET `/api/orders/{tracking_id}` - Track order status @done(2026-01-31)
+
+#### Protected Endpoints (Admin)
+✔ GET `/api/admin/orders` - Filtered order list @done(2026-01-31)
+✔ PUT `/api/admin/orders/{id}` - Update status & details @done(2026-01-31)
+✔ DELETE `/api/admin/orders/{id}` - Archive order @done(2026-01-31)
+✔ POST `/api/admin/login` - Admin authentication @done(2026-01-31)
+✔ GET `/api/admin/stats` - Dashboard statistics @done(2026-01-31)
+
+### 🎯 PHASE 3: BUSINESS LOGIC
+
+#### Logic Implementation
+✔ Unique `tracking_id` generator (LND-XXXX) @done(2026-01-31)
+☐ Pricing calculation engine (Kiloan + Satuan)
+
+### 🎯 PHASE 5: UX IMPROVEMENTS
+
+#### User-Friendly Tracking ID
+☐ Update tracking_id format ke DDMMYY-XXX
+☐ Implement auto-increment per day
+☐ Add counter reset logic
+☐ Update validation rules
+
+📋 See: tasks/ux-improvements.todo for detailed plan

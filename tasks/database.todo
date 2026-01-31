@@ -1,0 +1,24 @@
+═══════════════════════════════════════════════════════════════════════════
+  LAUNDRY MANAGEMENT - DATABASE (POSTGRESQL)
+═══════════════════════════════════════════════════════════════════════════
+
+## Database Implementation
+
+### 🎯 PHASE 1: SCHEMA DESIGN
+
+#### Core Tables
+✔ Create `orders` table @done(2026-01-31)
+  ✔ Fields: id, tracking_id, customer_name, address, phone @done(2026-01-31)
+  ✔ Fields: service_type, order_type, status, weight, items @done(2026-01-31)
+  ✔ Fields: total_price, payment_status, timestamps @done(2026-01-31)
+✔ Create `admins` table for authentication @done(2026-01-31)
+
+#### Security & Policy
+✔ Setup RLS or Database Constraints @done(2026-01-31)
+✔ Define Relationships for scalability @done(2026-01-31)
+
+### 🎯 PHASE 2: DATA INITIALIZATION
+
+#### Seeders
+✔ Admin account seeder @done(2026-01-31)
+✔ Dummy orders for testing seeder @done(2026-01-31)

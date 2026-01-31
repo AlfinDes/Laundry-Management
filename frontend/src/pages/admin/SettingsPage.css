@@ -1,0 +1,32 @@
+.settings-page {
+    min-height: 100vh;
+    background: var(--color-bg);
+}
+
+.settings-card {
+    background: var(--color-surface);
+    padding: var(--spacing-2xl);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.settings-footer {
+    margin-top: var(--spacing-2xl);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.help-text {
+    display: block;
+    margin-top: var(--spacing-xs);
+    color: var(--color-text-secondary);
+    font-size: 0.8125rem;
+}
+
+@media (max-width: 768px) {
+    .settings-card {
+        padding: var(--spacing-xl);
+    }
+}

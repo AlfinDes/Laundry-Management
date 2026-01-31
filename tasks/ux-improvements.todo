@@ -1,0 +1,130 @@
+═══════════════════════════════════════════════════════════════════════════
+  LAUNDRY MANAGEMENT - UX IMPROVEMENTS
+═══════════════════════════════════════════════════════════════════════════
+
+## User Experience Enhancement
+
+### 🎯 PHASE 5: USER-FRIENDLY TRACKING ID
+
+#### Problem Statement
+Current tracking ID format (LND-9737) sulit diingat dan diketik oleh customer yang tidak terbiasa dengan format alfanumerik. Customer sering kesulitan mencatat dan memasukkan tracking ID untuk mengecek status pesanan mereka.
+
+#### Proposed Solutions
+
+**Option 1: Nomor Telepon sebagai Tracking ID**
+☐ Gunakan nomor telepon customer sebagai tracking ID
+☐ Format: 08123456789 (lebih familiar untuk customer)
+☐ Benefit: Customer tidak perlu mencatat ID tambahan
+☐ Challenge: Privacy concern, satu nomor bisa punya banyak pesanan
+
+**Option 2: Kode Pendek 4-6 Digit**
+☐ Generate kode unik 4-6 digit angka saja
+☐ Format: 123456 atau 1234
+☐ Benefit: Mudah diingat dan diketik
+☐ Challenge: Kemungkinan collision lebih tinggi
+
+**Option 3: Kombinasi Tanggal + Nomor Urut**
+☐ Format berdasarkan tanggal pemesanan
+☐ Format: 310126-01 (31 Jan 2026, pesanan ke-1)
+☐ Benefit: Mudah diingat, ada konteks waktu
+☐ Challenge: Perlu reset counter per hari
+
+**Option 4: Kata + Angka (Memorable)**
+☐ Kombinasi kata sederhana + angka
+☐ Format: CUCI-123 atau BERSIH-456
+☐ Benefit: Lebih mudah diingat dari kombinasi kata
+☐ Challenge: Tetap perlu dicatat
+
+#### Recommended Implementation (Option 2 + 3 Hybrid)
+
+**Format: DDMMYY-XXX**
+- DD: Tanggal (01-31)
+- MM: Bulan (01-12)
+- YY: Tahun (26 untuk 2026)
+- XXX: Nomor urut 3 digit (001-999)
+- Contoh: 310126-001, 310126-002
+
+**Keuntungan:**
+✓ Mudah diingat (ada konteks tanggal)
+✓ Unik per hari (max 999 pesanan/hari)
+✓ Lebih pendek dari format sekarang
+✓ Customer bisa ingat "pesanan saya tanggal 31 Januari"
+
+#### Backend Changes Required
+
+**Database Migration**
+☐ Update tracking_id column length jika perlu
+☐ Add index untuk performa search
+
+**Order Model**
+☐ Update generateTrackingId() method
+☐ Format: DDMMYY-XXX
+☐ Auto-increment per day logic
+☐ Handle counter reset setiap hari
+
+**Controller**
+☐ Update OrderController::store()
+☐ Ensure unique tracking ID generation
+☐ Add validation untuk format baru
+
+#### Frontend Changes Required
+
+**Tracking Input**
+☐ Update placeholder text
+☐ Contoh: "Masukkan kode pesanan (contoh: 310126-001)"
+☐ Add format helper text
+
+**Success Page (After Order)**
+☐ Display tracking ID dengan format besar dan jelas
+☐ Add "Simpan kode ini" reminder
+☐ Provide WhatsApp auto-save option
+
+**Tracking Page**
+☐ Update UI untuk format ID baru
+☐ Add format validation
+☐ Show friendly error jika format salah
+
+#### Alternative: QR Code Integration (Future Enhancement)
+
+**Phase 5B: QR Code Tracking**
+☐ Generate QR code untuk setiap pesanan
+☐ Customer scan QR untuk tracking
+☐ No need to type tracking ID
+☐ Print QR code di struk/nota
+
+#### Testing Checklist
+
+**Backend Testing**
+☐ Test unique ID generation
+☐ Test counter reset per hari
+☐ Test dengan multiple orders di hari yang sama
+☐ Test edge case (999+ orders per day)
+
+**Frontend Testing**
+☐ Test input validation
+☐ Test tracking dengan format baru
+☐ Test error handling
+☐ Test responsive design
+
+**User Testing**
+☐ Test dengan real customer
+☐ Measure ease of use
+☐ Collect feedback
+
+#### Priority: HIGH
+Reason: Directly impacts customer experience dan kemudahan penggunaan sistem
+
+#### Estimated Time: 4-6 hours
+- Backend: 2-3 hours
+- Frontend: 1-2 hours  
+- Testing: 1 hour
+
+#### Dependencies
+- None (independent feature)
+
+#### Notes
+- Bisa dikombinasikan dengan SMS/WhatsApp notification yang otomatis kirim tracking ID
+- Consider adding "Lupa Kode?" feature yang search by nomor telepon
+- Future: Implement QR code untuk eliminasi manual input
+
+═══════════════════════════════════════════════════════════════════════════
