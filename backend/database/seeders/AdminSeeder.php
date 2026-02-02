@@ -12,10 +12,12 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Admin::create([
-            'name' => 'Super Admin',
-            'username' => 'admin',
-            'password' => \Illuminate\Support\Facades\Hash::make('admin123'),
-        ]);
+        \App\Models\Admin::updateOrCreate(
+            ['username' => 'admin'],
+            [
+                'name' => 'Super Admin',
+                'password' => \Illuminate\Support\Facades\Hash::make('admin123'),
+            ]
+        );
     }
 }

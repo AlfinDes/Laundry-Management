@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { adminAPI } from '../../services/api';
+import AdminLayout from '../../components/AdminLayout';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
-    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [settings, setSettings] = useState({
@@ -48,21 +47,16 @@ export default function SettingsPage() {
     };
 
     if (loading) {
-        return <div className="settings-page"><div className="loading">Loading...</div></div>;
+        return <AdminLayout><div className="loading">Loading...</div></AdminLayout>;
     }
 
     return (
-        <div className="settings-page">
-            <div className="dashboard-header">
-                <div className="container">
-                    <div className="header-content">
-                        <h1>Pengaturan Bisnis</h1>
-                        <button onClick={() => navigate('/admin')} className="btn btn-secondary">Kembali</button>
-                    </div>
+        <AdminLayout>
+            <div className="settings-content">
+                <div className="dashboard-header-simple">
+                    <h1>Pengaturan Bisnis</h1>
                 </div>
-            </div>
 
-            <div className="container">
                 <motion.div
                     className="settings-card"
                     initial={{ opacity: 0, y: 20 }}
@@ -107,6 +101,6 @@ export default function SettingsPage() {
                     </form>
                 </motion.div>
             </div>
-        </div>
+        </AdminLayout>
     );
 }

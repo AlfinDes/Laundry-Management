@@ -1,0 +1,17 @@
+.dashboard-header-simple {
+    margin-bottom: 2rem;
+}
+
+.dashboard-header-simple h1 {
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.admin-dashboard-content,
+.settings-content {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}

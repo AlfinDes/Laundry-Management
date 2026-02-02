@@ -1,11 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { publicAPI } from '../services/api';
+import { getGroupedOrders, formatTime } from '../utils/orderHistory';
+import ThemeToggle from '../components/ThemeToggle';
 import './HomePage.css';
 
 export default function HomePage() {
     const navigate = useNavigate();
     const [trackingId, setTrackingId] = useState('');
+    const [services, setServices] = useState<any[]>([]);
+    const [orderHistory, setOrderHistory] = useState<Record<string, any[]>>({});
+    const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['Hari Ini']));
+
+    useEffect(() => {
+        fetchServices();
+        loadOrderHistory();
+    }, []);
+
+    const fetchServices = async () => {
+        try {
+            const res = await publicAPI.getServices();
+            setServices(res.data.data || []);
+        } catch (error) {
+            console.error('Error fetching services:', error);
+        }
+    };
+
+    const loadOrderHistory = () => {
+        const grouped = getGroupedOrders();
+        setOrderHistory(grouped);
+    };
+
+    const toggleGroup = (groupLabel: string) => {
+        const newExpanded = new Set(expandedGroups);
+        if (newExpanded.has(groupLabel)) {
+            newExpanded.delete(groupLabel);
+        } else {
+            newExpanded.add(groupLabel);
+        }
+        setExpandedGroups(newExpanded);
+    };
 
     const handleTrackOrder = (e: React.FormEvent) => {
         e.preventDefault();
@@ -16,6 +51,7 @@ export default function HomePage() {
 
     return (
         <div className="home-page">
+            <ThemeToggle />
             <motion.div
                 className="hero-section"
                 initial={{ opacity: 0 }}
@@ -95,6 +131,83 @@ export default function HomePage() {
                     </motion.div>
                 </div>
             </motion.div>
+
+            {/* Order History Section */}
+            {Object.keys(orderHistory).length > 0 && (
+                <div className="order-history-section">
+                    <div className="container">
+                        <h2 className="section-title text-center">Riwayat Pesanan</h2>
+                        <div className="history-groups">
+                            {Object.entries(orderHistory).map(([groupLabel, orders]) => (
+                                <div key={groupLabel} className="history-group">
+                                    <button
+                                        className="group-header"
+                                        onClick={() => toggleGroup(groupLabel)}
+                                    >
+                                        <span className="group-label">{groupLabel}</span>
+                                        <span className="group-count">{orders.length} pesanan</span>
+                                        <span className={`group-icon ${expandedGroups.has(groupLabel) ? 'expanded' : ''}`}>
+                                            ▼
+                                        </span>
+                                    </button>
+                                    <AnimatePresence>
+                                        {expandedGroups.has(groupLabel) && (
+                                            <motion.div
+                                                className="group-content"
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                transition={{ duration: 0.3 }}
+                                            >
+                                                {orders.map((order) => (
+                                                    <Link
+                                                        key={order.trackingId}
+                                                        to={`/track/${order.trackingId}`}
+                                                        className="order-history-card"
+                                                    >
+                                                        <div className="order-info">
+                                                            <div className="order-tracking-id">{order.trackingId}</div>
+                                                            <div className="order-customer-name">{order.customerName}</div>
+                                                        </div>
+                                                        <div className="order-time">{formatTime(order.timestamp)}</div>
+                                                    </Link>
+                                                ))}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Services Pricing Section */}
+            {services.length > 0 && (
+                <div className="pricing-section">
+                    <div className="container">
+                        <h2 className="section-title text-center">Daftar Harga Layanan</h2>
+                        <div className="pricing-grid">
+                            {services.map((service) => (
+                                <motion.div
+                                    key={service.id}
+                                    className="pricing-card glass-card"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <h3>{service.name}</h3>
+                                    <div className="price">
+                                        <span className="price-amount">Rp {Math.floor(service.price).toLocaleString('id-ID')}</span>
+                                        <span className="price-unit">/ {service.unit}</span>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="features-section">
                 <div className="container">

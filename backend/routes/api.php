@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AdminOrderController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/orders', [OrderController::class, 'store']);
 Route::get('/orders/{tracking_id}', [OrderController::class, 'track']);
 Route::get('/settings', [SettingController::class, 'index']);
+Route::get('/services', [ServiceController::class, 'index']);
 
 // Admin authentication (Public)
 Route::post('/admin/login', [AdminController::class, 'login']);
@@ -33,4 +35,10 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
     // Dashboard stats
     Route::get('/stats', [AdminOrderController::class, 'stats']);
+
+    // Service management
+    Route::get('/services', [ServiceController::class, 'adminIndex']);
+    Route::post('/services', [ServiceController::class, 'store']);
+    Route::put('/services/{id}', [ServiceController::class, 'update']);
+    Route::delete('/services/{id}', [ServiceController::class, 'destroy']);
 });

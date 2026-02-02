@@ -1,0 +1,15 @@
+{
+    "name": "laundry-management",
+    "version": "1.0.0",
+    "description": "Laundry Management System with unified dev script",
+    "private": true,
+    "scripts": {
+        "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "dev:backend": "cd backend && php artisan serve",
+        "dev:frontend": "cd frontend && npm run dev",
+        "install:all": "npm install --prefix frontend && composer install --directory=backend"
+    },
+    "devDependencies": {
+        "concurrently": "^9.0.1"
+    }
+}

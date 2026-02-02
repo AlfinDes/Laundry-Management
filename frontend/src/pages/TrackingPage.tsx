@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { publicAPI } from '../services/api';
 import { Order } from '../types';
+import ThemeToggle from '../components/ThemeToggle';
 import './TrackingPage.css';
 
 export default function TrackingPage() {
@@ -75,6 +76,7 @@ export default function TrackingPage() {
 
     return (
         <div className="tracking-page">
+            <ThemeToggle />
             <div className="container">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -130,7 +132,7 @@ export default function TrackingPage() {
                                 <div className="detail-item">
                                     <span className="detail-label">Total Harga</span>
                                     {order.total_price ? (
-                                        <span className="detail-value">Rp {Number(order.total_price).toLocaleString('id-ID')}</span>
+                                        <span className="detail-value">Rp {Math.floor(Number(order.total_price)).toLocaleString('id-ID')}</span>
                                     ) : (
                                         <span className="detail-value text-secondary" style={{ fontStyle: 'italic' }}>Menunggu konfirmasi admin</span>
                                     )}
@@ -149,7 +151,7 @@ export default function TrackingPage() {
                                         `Halo ${settings.laundry_name || 'Admin'}, saya ingin konfirmasi pembayaran untuk pesanan saya:\n\n` +
                                         `ID Tracking: ${order.tracking_id}\n` +
                                         `Nama: ${order.customer_name}\n` +
-                                        `Total: Rp ${Number(order.total_price).toLocaleString('id-ID')}\n\n` +
+                                        `Total: Rp ${Math.floor(Number(order.total_price)).toLocaleString('id-ID')}\n\n` +
                                         `Mohon bantuannya untuk memproses pesanan saya. Terima kasih!`
                                     )}`}
                                     target="_blank"

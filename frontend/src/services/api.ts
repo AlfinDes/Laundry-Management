@@ -35,6 +35,9 @@ export const publicAPI = {
 
     // Get business settings (public)
     getSettings: () => api.get('/settings'),
+
+    // Get active services (public)
+    getServices: () => api.get('/services'),
 };
 
 // Admin API
@@ -68,6 +71,12 @@ export const adminAPI = {
 
     // Dashboard Stats
     getStats: () => api.get('/admin/stats'),
+
+    // Service Management
+    getServices: () => api.get('/admin/services'),
+    createService: (data: any) => api.post('/admin/services', data),
+    updateService: (id: number, data: any) => api.put(`/admin/services/${id}`, data),
+    deleteService: (id: number) => api.delete(`/admin/services/${id}`),
 };
 
 export default api;

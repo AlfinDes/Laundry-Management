@@ -35,7 +35,21 @@ php artisan serve
 
 Server backend akan berjalan di: **http://127.0.0.1:8000**
 
-### 2. Setup Frontend (React + Vite)
+### ⚡ Quick Start (Jalankan Semua)
+
+Jika Anda ingin menjalankan backend dan frontend sekaligus dengan satu perintah:
+
+```bash
+# Install dependencies (jika belum)
+npm run install:all
+
+# Jalankan semua server
+npm run dev
+```
+
+---
+
+### 1. Setup Backend (Laravel API)
 
 ```bash
 # Masuk ke folder frontend

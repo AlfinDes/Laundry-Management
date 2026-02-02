@@ -20,6 +20,7 @@
     height: 800px;
     background: radial-gradient(circle, hsla(211, 100%, 50%, 0.1) 0%, transparent 70%);
     border-radius: 50%;
+    pointer-events: none;
 }
 
 .hero-content {
@@ -150,6 +151,155 @@
 .feature-item p {
     color: var(--color-text-secondary);
     margin: 0;
+}
+
+/* Pricing Section */
+.pricing-section {
+    padding: var(--spacing-2xl) 0;
+    background: linear-gradient(135deg, hsl(211, 100%, 98%) 0%, hsl(211, 100%, 96%) 100%);
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.pricing-card {
+    text-align: center;
+    padding: var(--spacing-xl);
+    transition: transform var(--transition-base);
+}
+
+.pricing-card:hover {
+    transform: translateY(-8px);
+}
+
+.pricing-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text);
+}
+
+.pricing-card .price {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.price-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.price-unit {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+}
+
+/* Order History Section */
+.order-history-section {
+    padding: var(--spacing-2xl) 0;
+    background: var(--color-surface);
+}
+
+.history-groups {
+    max-width: 800px;
+    margin: var(--spacing-xl) auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.history-group {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.group-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background var(--transition-base);
+}
+
+.group-header:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.group-label {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.group-count {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-left: auto;
+    margin-right: var(--spacing-md);
+}
+
+.group-icon {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    transition: transform var(--transition-base);
+}
+
+.group-icon.expanded {
+    transform: rotate(180deg);
+}
+
+.group-content {
+    overflow: hidden;
+}
+
+.order-history-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+    text-decoration: none;
+    transition: background var(--transition-base);
+}
+
+.order-history-card:hover {
+    background: rgba(var(--color-primary), 0.05);
+}
+
+.order-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.order-tracking-id {
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: 1rem;
+}
+
+.order-customer-name {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.order-time {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    font-weight: 500;
 }
 
 @media (max-width: 768px) {

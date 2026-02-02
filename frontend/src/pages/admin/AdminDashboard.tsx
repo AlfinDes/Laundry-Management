@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { adminAPI } from '../../services/api';
 import { Order, DashboardStats } from '../../types';
+import AdminLayout from '../../components/AdminLayout';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {
@@ -43,18 +44,6 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleLogout = async () => {
-        try {
-            await adminAPI.logout();
-        } catch (error) {
-            console.error('Logout error:', error);
-        } finally {
-            localStorage.removeItem('admin_token');
-            localStorage.removeItem('admin_name');
-            navigate('/admin/login');
-        }
-    };
-
     const handleEditClick = (order: Order) => {
         setEditingOrder(order);
         setEditForm({
@@ -91,15 +80,6 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleUpdateStatus = async (orderId: number, newStatus: string) => {
-        try {
-            await adminAPI.updateOrder(orderId, { status: newStatus });
-            fetchData();
-        } catch (error) {
-            console.error('Error updating order:', error);
-        }
-    };
-
     const getStatusBadge = (status: string) => {
         const badges: Record<string, string> = {
             pending: 'badge-warning',
@@ -127,24 +107,16 @@ export default function AdminDashboard() {
     };
 
     if (loading) {
-        return <div className="admin-dashboard"><div className="loading">Loading...</div></div>;
+        return <AdminLayout><div className="loading">Loading...</div></AdminLayout>;
     }
 
     return (
-        <div className="admin-dashboard">
-            <div className="dashboard-header">
-                <div className="container">
-                    <div className="header-content">
-                        <h1>Dashboard Admin</h1>
-                        <div className="header-actions">
-                            <button onClick={() => navigate('/admin/settings')} className="btn btn-secondary">Pengaturan</button>
-                            <button onClick={handleLogout} className="btn btn-secondary">Keluar</button>
-                        </div>
-                    </div>
+        <AdminLayout>
+            <div className="admin-dashboard-content">
+                <div className="dashboard-header-simple">
+                    <h1>Dashboard Admin</h1>
                 </div>
-            </div>
 
-            <div className="container">
                 <motion.div
                     className="stats-grid"
                     initial={{ opacity: 0, y: 20 }}
@@ -171,7 +143,7 @@ export default function AdminDashboard() {
 
                     <div className="stat-card">
                         <div className="stat-icon">💰</div>
-                        <div className="stat-value">Rp {Number(stats?.total_revenue || 0).toLocaleString('id-ID')}</div>
+                        <div className="stat-value">Rp {Math.floor(Number(stats?.total_revenue || 0)).toLocaleString('id-ID')}</div>
                         <div className="stat-label">Total Pendapatan</div>
                     </div>
                 </motion.div>
@@ -215,7 +187,7 @@ export default function AdminDashboard() {
                                                 {getStatusLabel(order.status)}
                                             </span>
                                         </td>
-                                        <td>{order.total_price ? `Rp ${Number(order.total_price).toLocaleString('id-ID')}` : '-'}</td>
+                                        <td>{order.total_price ? `Rp ${Math.floor(Number(order.total_price)).toLocaleString('id-ID')}` : '-'}</td>
                                         <td>
                                             <span className={`badge ${order.payment_status === 'paid' ? 'badge-success' : 'badge-warning'}`}>
                                                 {order.payment_status === 'paid' ? 'Lunas' : 'Belum Bayar'}
@@ -235,101 +207,101 @@ export default function AdminDashboard() {
                         </table>
                     </div>
                 </div>
-            </div>
 
-            {editingOrder && (
-                <div className="modal-overlay" onClick={() => setEditingOrder(null)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h2>Ubah Pesanan - {editingOrder.tracking_id}</h2>
-                            <button className="modal-close" onClick={() => setEditingOrder(null)}>×</button>
-                        </div>
-
-                        <div className="modal-body">
-                            <div className="form-group">
-                                <label className="form-label">Pelanggan</label>
-                                <input
-                                    type="text"
-                                    className="input"
-                                    value={editingOrder.customer_name}
-                                    disabled
-                                />
+                {editingOrder && (
+                    <div className="modal-overlay" onClick={() => setEditingOrder(null)}>
+                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                            <div className="modal-header">
+                                <h2>Ubah Pesanan - {editingOrder.tracking_id}</h2>
+                                <button className="modal-close" onClick={() => setEditingOrder(null)}>×</button>
                             </div>
 
-                            <div className="form-group">
-                                <label className="form-label">Jenis Layanan</label>
-                                <input
-                                    type="text"
-                                    className="input"
-                                    value={editingOrder.service_type}
-                                    disabled
-                                />
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label className="form-label">Pelanggan</label>
+                                    <input
+                                        type="text"
+                                        className="input"
+                                        value={editingOrder.customer_name}
+                                        disabled
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Jenis Layanan</label>
+                                    <input
+                                        type="text"
+                                        className="input"
+                                        value={editingOrder.service_type}
+                                        disabled
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Berat (kg)</label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        className="input"
+                                        placeholder="Masukkan berat cucian"
+                                        value={editForm.weight}
+                                        onChange={(e) => setEditForm({ ...editForm, weight: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Total Harga (Rp)</label>
+                                    <input
+                                        type="number"
+                                        className="input"
+                                        placeholder="Masukkan total harga"
+                                        value={editForm.total_price}
+                                        onChange={(e) => setEditForm({ ...editForm, total_price: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Status</label>
+                                    <select
+                                        className="input"
+                                        value={editForm.status}
+                                        onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                                    >
+                                        <option value="pending">Menunggu Pickup</option>
+                                        <option value="picked_up">Sudah Diambil</option>
+                                        <option value="washing">Sedang Dicuci</option>
+                                        <option value="ironing">Sedang Disetrika</option>
+                                        <option value="ready">Siap Diambil</option>
+                                        <option value="delivered">Dalam Pengiriman</option>
+                                        <option value="completed">Selesai</option>
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Status Pembayaran</label>
+                                    <select
+                                        className="input"
+                                        value={editForm.payment_status}
+                                        onChange={(e) => setEditForm({ ...editForm, payment_status: e.target.value })}
+                                    >
+                                        <option value="unpaid">Belum Bayar</option>
+                                        <option value="paid">Lunas</option>
+                                    </select>
+                                </div>
                             </div>
 
-                            <div className="form-group">
-                                <label className="form-label">Berat (kg)</label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    className="input"
-                                    placeholder="Masukkan berat cucian"
-                                    value={editForm.weight}
-                                    onChange={(e) => setEditForm({ ...editForm, weight: e.target.value })}
-                                />
+                            <div className="modal-footer">
+                                <button className="btn btn-secondary" onClick={() => setEditingOrder(null)}>
+                                    Batal
+                                </button>
+                                <button className="btn btn-primary" onClick={handleSaveEdit}>
+                                    Simpan Perubahan
+                                </button>
                             </div>
-
-                            <div className="form-group">
-                                <label className="form-label">Total Harga (Rp)</label>
-                                <input
-                                    type="number"
-                                    className="input"
-                                    placeholder="Masukkan total harga"
-                                    value={editForm.total_price}
-                                    onChange={(e) => setEditForm({ ...editForm, total_price: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label className="form-label">Status</label>
-                                <select
-                                    className="input"
-                                    value={editForm.status}
-                                    onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                                >
-                                    <option value="pending">Menunggu Pickup</option>
-                                    <option value="picked_up">Sudah Diambil</option>
-                                    <option value="washing">Sedang Dicuci</option>
-                                    <option value="ironing">Sedang Disetrika</option>
-                                    <option value="ready">Siap Diambil</option>
-                                    <option value="delivered">Dalam Pengiriman</option>
-                                    <option value="completed">Selesai</option>
-                                </select>
-                            </div>
-
-                            <div className="form-group">
-                                <label className="form-label">Status Pembayaran</label>
-                                <select
-                                    className="input"
-                                    value={editForm.payment_status}
-                                    onChange={(e) => setEditForm({ ...editForm, payment_status: e.target.value })}
-                                >
-                                    <option value="unpaid">Belum Bayar</option>
-                                    <option value="paid">Lunas</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="modal-footer">
-                            <button className="btn btn-secondary" onClick={() => setEditingOrder(null)}>
-                                Batal
-                            </button>
-                            <button className="btn btn-primary" onClick={handleSaveEdit}>
-                                Simpan Perubahan
-                            </button>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </AdminLayout>
     );
 }
