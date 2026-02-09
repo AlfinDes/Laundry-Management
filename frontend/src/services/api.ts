@@ -65,6 +65,8 @@ export const adminAPI = {
 
     deleteOrder: (id: number) => api.delete(`/admin/orders/${id}`),
 
+    resetOrders: () => api.delete('/admin/orders-reset'),
+
     // Settings Management
     getSettings: () => api.get('/admin/settings'),
     updateSettings: (settings: Record<string, string>) => api.put('/admin/settings', { settings }),

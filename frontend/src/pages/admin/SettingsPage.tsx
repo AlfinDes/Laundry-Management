@@ -46,6 +46,20 @@ export default function SettingsPage() {
         }
     };
 
+    const handleResetData = async () => {
+        if (window.confirm('APAKAH ANDA YAKIN? Data akan dihapus permanen!')) {
+            if (window.confirm('Ini adalah konfirmasi terakhir. Semua data pesanan akan hilang!')) {
+                try {
+                    await adminAPI.resetOrders();
+                    alert('Data pesanan berhasil direset.');
+                } catch (error) {
+                    console.error('Error resetting data:', error);
+                    alert('Gagal mereset data.');
+                }
+            }
+        }
+    };
+
     if (loading) {
         return <AdminLayout><div className="loading">Loading...</div></AdminLayout>;
     }
@@ -100,6 +114,30 @@ export default function SettingsPage() {
                         </div>
                     </form>
                 </motion.div>
+
+                <div className="danger-zone-container">
+                    <h2 className="danger-zone-title">Dangerous Zone</h2>
+                    <motion.div
+                        className="danger-zone-card"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                    >
+                        <div className="danger-item">
+                            <div className="danger-info">
+                                <h3>Reset Data Pesanan</h3>
+                                <p>Hapus semua data pesanan dari database. Tindakan ini tidak dapat dibatalkan.</p>
+                            </div>
+                            <button
+                                type="button"
+                                className="btn btn-danger"
+                                onClick={handleResetData}
+                            >
+                                Reset Semua Data
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
             </div>
         </AdminLayout>
     );

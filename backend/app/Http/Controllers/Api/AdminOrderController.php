@@ -143,4 +143,17 @@ class AdminOrderController extends Controller
             ]
         ]);
     }
+
+    /**
+     * Reset/Delete all orders (Development use only)
+     */
+    public function reset()
+    {
+        Order::truncate();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'All orders have been reset successfully'
+        ]);
+    }
 }

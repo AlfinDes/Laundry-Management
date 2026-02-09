@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::get('/orders/{id}', [AdminOrderController::class, 'show']);
     Route::put('/orders/{id}', [AdminOrderController::class, 'update']);
     Route::delete('/orders/{id}', [AdminOrderController::class, 'destroy']);
+    Route::delete('/orders-reset', [AdminOrderController::class, 'reset']);
 
     // Settings management
     Route::get('/settings', [SettingController::class, 'index']);
