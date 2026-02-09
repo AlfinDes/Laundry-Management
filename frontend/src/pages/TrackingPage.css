@@ -167,3 +167,25 @@
         font-size: 0.625rem;
     }
 }
+
+/* Dark Mode Overrides */
+.dark-mode .tracking-page {
+    background: linear-gradient(135deg, hsl(220, 15%, 10%) 0%, hsl(220, 15%, 8%) 100%);
+}
+
+.dark-mode .step::after {
+    background: var(--color-border);
+}
+
+.dark-mode .step.active::after {
+    background: var(--color-primary);
+}
+
+.dark-mode .step-indicator {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+}
+
+.dark-mode .detail-item {
+    border-bottom-color: var(--color-border);
+}

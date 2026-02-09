@@ -22,11 +22,9 @@ class OrderController extends Controller
             'order_type' => 'required|in:pickup,dropoff',
         ]);
 
-        // Generate unique tracking ID
-        $trackingId = $this->generateTrackingId();
-
+        // Generate unique tracking ID with format DDMMYY-XXX
         $order = Order::create([
-            'tracking_id' => $trackingId,
+            'tracking_id' => Order::generateTrackingId(),
             'customer_name' => $validated['customer_name'],
             'customer_address' => $validated['customer_address'],
             'customer_phone' => $validated['customer_phone'],
@@ -82,15 +80,4 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Generate unique tracking ID (LND-XXXX)
-     */
-    private function generateTrackingId()
-    {
-        do {
-            $trackingId = 'LND-' . rand(1000, 9999);
-        } while (Order::where('tracking_id', $trackingId)->exists());
-
-        return $trackingId;
-    }
 }

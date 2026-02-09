@@ -10,13 +10,24 @@ export default function HomePage() {
     const navigate = useNavigate();
     const [trackingId, setTrackingId] = useState('');
     const [services, setServices] = useState<any[]>([]);
+    const [settings, setSettings] = useState<Record<string, string>>({});
     const [orderHistory, setOrderHistory] = useState<Record<string, any[]>>({});
     const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['Hari Ini']));
 
     useEffect(() => {
+        fetchSettings();
         fetchServices();
         loadOrderHistory();
     }, []);
+
+    const fetchSettings = async () => {
+        try {
+            const res = await publicAPI.getSettings();
+            setSettings(res.data.data || {});
+        } catch (error) {
+            console.error('Error fetching settings:', error);
+        }
+    };
 
     const fetchServices = async () => {
         try {
@@ -66,7 +77,7 @@ export default function HomePage() {
                         transition={{ delay: 0.2, duration: 0.6 }}
                     >
                         <h1 className="hero-title">
-                            Laundry Premium
+                            {settings.laundry_name || 'Laundry Premium'}
                             <span className="gradient-text"> Terpercaya</span>
                         </h1>
                         <p className="hero-subtitle">
@@ -89,7 +100,7 @@ export default function HomePage() {
                                     <input
                                         type="text"
                                         className="input tracking-input"
-                                        placeholder="Masukkan Tracking ID (contoh: LND-7482)"
+                                        placeholder="Masukkan Kode Pesanan (contoh: 090226-001)"
                                         value={trackingId}
                                         onChange={(e) => setTrackingId(e.target.value)}
                                     />
@@ -101,6 +112,9 @@ export default function HomePage() {
                                         Lacak Pesanan
                                     </button>
                                 </div>
+                                <p className="tracking-helper">
+                                    Format: DDMMYY-XXX (Tanggal pesanan + nomor urut)
+                                </p>
                             </form>
                         </div>
                     </motion.div>

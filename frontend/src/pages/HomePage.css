@@ -23,6 +23,36 @@
     pointer-events: none;
 }
 
+/* Dark Mode Overrides */
+.dark-mode .hero-section {
+    background: linear-gradient(135deg, hsl(220, 15%, 10%) 0%, hsl(220, 15%, 8%) 100%);
+}
+
+.dark-mode .hero-section::before {
+    background: radial-gradient(circle, hsla(211, 100%, 50%, 0.08) 0%, transparent 70%);
+}
+
+.dark-mode .feature-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+}
+
+.dark-mode .pricing-section {
+    background: linear-gradient(135deg, hsl(220, 15%, 9%) 0%, hsl(220, 15%, 11%) 100%);
+}
+
+.dark-mode .order-history-section {
+    background: var(--color-surface);
+}
+
+.dark-mode .group-header:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .order-history-card:hover {
+    background: hsla(211, 100%, 50%, 0.1);
+}
+
 .hero-content {
     max-width: 600px;
     z-index: 1;
@@ -75,6 +105,13 @@
 .tracking-input-group .btn {
     white-space: nowrap;
     flex-shrink: 0;
+}
+
+.tracking-helper {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-sm);
+    text-align: center;
 }
 
 .btn-lg {

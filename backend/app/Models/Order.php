@@ -25,4 +25,31 @@ class Order extends Model
         'weight' => 'decimal:2',
         'total_price' => 'decimal:2',
     ];
+
+    /**
+     * Generate unique tracking ID with format DDMMYY-XXX
+     * Example: 090226-001 (9 Feb 2026, order #1)
+     */
+    public static function generateTrackingId(): string
+    {
+        $datePrefix = now()->format('dmy'); // 090226
+
+        // Find last order created today with this date prefix
+        $lastOrder = self::whereDate('created_at', today())
+            ->where('tracking_id', 'like', $datePrefix . '-%')
+            ->orderBy('tracking_id', 'desc')
+            ->first();
+
+        if ($lastOrder) {
+            // Extract the last 3 digits and increment
+            $lastNumber = (int) substr($lastOrder->tracking_id, -3);
+            $newNumber = $lastNumber + 1;
+        } else {
+            // First order of the day
+            $newNumber = 1;
+        }
+
+        // Format: DDMMYY-XXX (e.g., 090226-001)
+        return sprintf('%s-%03d', $datePrefix, $newNumber);
+    }
 }
