@@ -12,6 +12,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
+        \Log::info('Running AdminSeeder...');
         \App\Models\Admin::updateOrCreate(
             ['username' => 'admin'],
             [
@@ -19,5 +20,6 @@ class AdminSeeder extends Seeder
                 'password' => \Illuminate\Support\Facades\Hash::make('admin123'),
             ]
         );
+        \Log::info('AdminSeeder completed.');
     }
 }

@@ -20,9 +20,25 @@ class AdminController extends Controller
             'password' => 'required|string',
         ]);
 
+        \Log::info('Production Login attempt', [
+            'username' => $request->username,
+            'password_provided_length' => strlen($request->password),
+        ]);
+
         $admin = Admin::where('username', $request->username)->first();
 
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
+        if ($admin) {
+            $check = \Illuminate\Support\Facades\Hash::check($request->password, $admin->password);
+            \Log::info('Admin found in production', [
+                'username' => $admin->username,
+                'password_check' => $check ? 'success' : 'failed',
+                'hash_start' => substr($admin->password, 0, 10)
+            ]);
+        } else {
+            \Log::info('Admin NOT found in production', ['username' => $request->username]);
+        }
+
+        if (!$admin || !\Illuminate\Support\Facades\Hash::check($request->password, $admin->password)) {
             throw ValidationException::withMessages([
                 'username' => ['The provided credentials are incorrect.'],
             ]);
