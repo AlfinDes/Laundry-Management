@@ -4,7 +4,7 @@ export interface Order {
     customer_name: string;
     customer_address: string;
     customer_phone: string;
-    service_type: 'kiloan' | 'satuan' | 'both';
+    service_type: 'kiloan' | 'satuan';
     order_type: 'pickup' | 'dropoff';
     status: 'pending' | 'picked_up' | 'washing' | 'ironing' | 'ready' | 'delivered' | 'completed';
     weight: number | null;

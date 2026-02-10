@@ -163,18 +163,10 @@ export default function TrackingPage() {
                             )}
 
                             {!order.weight && !order.total_price && (
-                                <div style={{
-                                    display: 'flex',
-                                    gap: 'var(--spacing-md)',
-                                    padding: 'var(--spacing-md)',
-                                    background: 'hsla(211, 100%, 50%, 0.05)',
-                                    borderLeft: '3px solid var(--color-primary)',
-                                    borderRadius: 'var(--radius-md)',
-                                    marginTop: 'var(--spacing-lg)'
-                                }}>
-                                    <div style={{ fontSize: '1.5rem', flexShrink: 0 }}>ℹ️</div>
-                                    <div style={{ fontSize: '0.875rem', lineHeight: 1.5 }}>
-                                        <strong style={{ display: 'block', marginBottom: 'var(--spacing-xs)', color: 'var(--color-primary)' }}>Informasi:</strong>
+                                <div className="info-box">
+                                    <div className="info-box-icon">ℹ️</div>
+                                    <div className="info-box-content">
+                                        <strong className="info-box-title">Informasi:</strong>
                                         Berat dan harga akan diupdate oleh admin setelah cucian Anda ditimbang dan diproses.
                                     </div>
                                 </div>

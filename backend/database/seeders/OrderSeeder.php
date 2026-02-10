@@ -46,7 +46,7 @@ class OrderSeeder extends Seeder
             'customer_name' => 'Andi Wijaya',
             'customer_address' => 'Apartment Pavilion Lt. 5, Jakarta',
             'customer_phone' => '081198765432',
-            'service_type' => 'both',
+            'service_type' => 'kiloan',
             'order_type' => 'pickup',
             'status' => 'ironing',
             'weight' => 3.0,

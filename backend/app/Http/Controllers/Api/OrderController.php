@@ -18,7 +18,7 @@ class OrderController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_address' => 'required|string',
             'customer_phone' => 'required|string|max:20',
-            'service_type' => 'required|in:kiloan,satuan,both',
+            'service_type' => 'required|in:kiloan,satuan',
             'order_type' => 'required|in:pickup,dropoff',
         ]);
 

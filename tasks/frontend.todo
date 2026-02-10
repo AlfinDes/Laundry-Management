@@ -37,10 +37,10 @@
 ### 🎯 PHASE 5: UX IMPROVEMENTS
 
 #### User-Friendly Tracking ID
-☐ Update tracking input placeholder
-☐ Add format helper text
-☐ Update success page dengan ID yang lebih jelas
-☐ Add "Simpan kode ini" reminder
-☐ Update validation untuk format baru
+✔ Update tracking input placeholder @done(2026-02-10)
+✔ Add format helper text @done(2026-02-10)
+✔ Update success page dengan ID yang lebih jelas @done(2026-02-10)
+✔ Add "Simpan kode ini" reminder @done(2026-02-10)
+✔ Update validation untuk format baru @done(2026-02-10)
 
 📋 See: tasks/ux-improvements.todo for detailed plan

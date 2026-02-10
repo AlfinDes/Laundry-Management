@@ -33,9 +33,9 @@
 ### 🎯 PHASE 5: UX IMPROVEMENTS
 
 #### User-Friendly Tracking ID
-☐ Update tracking_id format ke DDMMYY-XXX
-☐ Implement auto-increment per day
-☐ Add counter reset logic
-☐ Update validation rules
+✔ Update tracking_id format ke DDMMYY-XXX @done(2026-02-10)
+✔ Implement auto-increment per day @done(2026-02-10)
+✔ Add counter reset logic @done(2026-02-10)
+✔ Update validation rules @done(2026-02-10)
 
 📋 See: tasks/ux-improvements.todo for detailed plan

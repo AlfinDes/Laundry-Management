@@ -97,7 +97,6 @@ export default function PickupPage() {
                                 >
                                     <option value="kiloan">Kiloan</option>
                                     <option value="satuan">Satuan (Dry Clean)</option>
-                                    <option value="both">Keduanya</option>
                                 </select>
                             </div>
 

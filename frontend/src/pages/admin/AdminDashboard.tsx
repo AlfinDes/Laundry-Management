@@ -13,6 +13,7 @@ export default function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('');
     const [editingOrder, setEditingOrder] = useState<Order | null>(null);
+    const [services, setServices] = useState<any[]>([]);
     const [editForm, setEditForm] = useState({
         weight: '',
         total_price: '',
@@ -31,18 +32,45 @@ export default function AdminDashboard() {
 
     const fetchData = async () => {
         try {
-            const [statsRes, ordersRes] = await Promise.all([
+            const [statsRes, ordersRes, servicesRes] = await Promise.all([
                 adminAPI.getStats(),
                 adminAPI.getOrders({ status: filter || undefined }),
+                adminAPI.getServices(),
             ]);
             setStats(statsRes.data.data);
             setOrders(ordersRes.data.data.data);
+            setServices(servicesRes.data.data);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
             setLoading(false);
         }
     };
+
+    // Auto-calculate price when weight or editingOrder changes
+    useEffect(() => {
+        if (!editingOrder || !editForm.weight) return;
+
+        const weight = parseFloat(editForm.weight);
+        if (isNaN(weight)) return;
+
+        // Simple logic: find service that matches service_type
+        const serviceType = editingOrder.service_type; // 'kiloan', 'satuan'
+
+        let rate = 0;
+        if (serviceType === 'kiloan') {
+            const kiloanService = services.find(s => s.name.toLowerCase().includes('kiloan'));
+            if (kiloanService) rate = kiloanService.price;
+        } else if (serviceType === 'satuan') {
+            const satuanService = services.find(s => s.name.toLowerCase().includes('satuan'));
+            if (satuanService) rate = satuanService.price;
+        }
+
+        if (rate > 0) {
+            const total = weight * rate;
+            setEditForm(prev => ({ ...prev, total_price: total.toString() }));
+        }
+    }, [editForm.weight, editingOrder, services]);
 
     const handleEditClick = (order: Order) => {
         setEditingOrder(order);
