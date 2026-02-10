@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { QRCodeSVG } from 'qrcode.react';
 import { publicAPI } from '../services/api';
 import { Order } from '../types';
 import ThemeToggle from '../components/ThemeToggle';
@@ -84,10 +85,21 @@ export default function TrackingPage() {
                     transition={{ duration: 0.5 }}
                 >
                     <div className="glass-card">
-                        <div className="tracking-header">
-                            <h1>Lacak Pesanan</h1>
-                            <div className="tracking-id">
-                                <span className="badge badge-primary">{order.tracking_id}</span>
+                        <div className="tracking-info-row">
+                            <div className="tracking-id-section">
+                                <h1>Lacak Pesanan</h1>
+                                <div className="tracking-id">
+                                    <span className="badge badge-primary">{order.tracking_id}</span>
+                                </div>
+                            </div>
+                            <div className="qr-code-section">
+                                <QRCodeSVG
+                                    value={window.location.href}
+                                    size={80}
+                                    level="H"
+                                    includeMargin={false}
+                                />
+                                <span className="qr-label">Scan untuk Lacak</span>
                             </div>
                         </div>
 
