@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
+import CustomerLayout from './components/CustomerLayout';
 import HomePage from './pages/HomePage';
 import PickupPage from './pages/PickupPage';
 import TrackingPage from './pages/TrackingPage';
@@ -14,10 +15,12 @@ function App() {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/pickup" element={<PickupPage />} />
-          <Route path="/track/:trackingId" element={<TrackingPage />} />
+          {/* Public Routes - wrapped with CustomerLayout for shared Navbar */}
+          <Route element={<CustomerLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/pickup" element={<PickupPage />} />
+            <Route path="/track/:trackingId" element={<TrackingPage />} />
+          </Route>
 
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />

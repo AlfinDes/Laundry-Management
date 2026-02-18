@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { publicAPI } from '../services/api';
-import { getGroupedOrders, formatTime } from '../utils/orderHistory';
-import ThemeToggle from '../components/ThemeToggle';
 import './HomePage.css';
 
 export default function HomePage() {
@@ -11,13 +9,10 @@ export default function HomePage() {
     const [trackingId, setTrackingId] = useState('');
     const [services, setServices] = useState<any[]>([]);
     const [settings, setSettings] = useState<Record<string, string>>({});
-    const [orderHistory, setOrderHistory] = useState<Record<string, any[]>>({});
-    const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['Hari Ini']));
 
     useEffect(() => {
         fetchSettings();
         fetchServices();
-        loadOrderHistory();
     }, []);
 
     const fetchSettings = async () => {
@@ -38,21 +33,6 @@ export default function HomePage() {
         }
     };
 
-    const loadOrderHistory = () => {
-        const grouped = getGroupedOrders();
-        setOrderHistory(grouped);
-    };
-
-    const toggleGroup = (groupLabel: string) => {
-        const newExpanded = new Set(expandedGroups);
-        if (newExpanded.has(groupLabel)) {
-            newExpanded.delete(groupLabel);
-        } else {
-            newExpanded.add(groupLabel);
-        }
-        setExpandedGroups(newExpanded);
-    };
-
     const handleTrackOrder = (e: React.FormEvent) => {
         e.preventDefault();
         if (trackingId.trim()) {
@@ -62,7 +42,6 @@ export default function HomePage() {
 
     return (
         <div className="home-page">
-            <ThemeToggle />
             <motion.div
                 className="hero-section"
                 initial={{ opacity: 0 }}
@@ -146,59 +125,9 @@ export default function HomePage() {
                 </div>
             </motion.div>
 
-            {/* Order History Section */}
-            {Object.keys(orderHistory).length > 0 && (
-                <div className="order-history-section">
-                    <div className="container">
-                        <h2 className="section-title text-center">Riwayat Pesanan</h2>
-                        <div className="history-groups">
-                            {Object.entries(orderHistory).map(([groupLabel, orders]) => (
-                                <div key={groupLabel} className="history-group">
-                                    <button
-                                        className="group-header"
-                                        onClick={() => toggleGroup(groupLabel)}
-                                    >
-                                        <span className="group-label">{groupLabel}</span>
-                                        <span className="group-count">{orders.length} pesanan</span>
-                                        <span className={`group-icon ${expandedGroups.has(groupLabel) ? 'expanded' : ''}`}>
-                                            ▼
-                                        </span>
-                                    </button>
-                                    <AnimatePresence>
-                                        {expandedGroups.has(groupLabel) && (
-                                            <motion.div
-                                                className="group-content"
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: 'auto', opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                {orders.map((order) => (
-                                                    <Link
-                                                        key={order.trackingId}
-                                                        to={`/track/${order.trackingId}`}
-                                                        className="order-history-card"
-                                                    >
-                                                        <div className="order-info">
-                                                            <div className="order-tracking-id">{order.trackingId}</div>
-                                                            <div className="order-customer-name">{order.customerName}</div>
-                                                        </div>
-                                                        <div className="order-time">{formatTime(order.timestamp)}</div>
-                                                    </Link>
-                                                ))}
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
-
             {/* Services Pricing Section */}
             {services.length > 0 && (
-                <div className="pricing-section">
+                <div className="pricing-section" id="pricing-section">
                     <div className="container">
                         <h2 className="section-title text-center">Daftar Harga Layanan</h2>
                         <div className="pricing-grid">
