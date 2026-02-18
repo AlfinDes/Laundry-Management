@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { publicAPI } from '../services/api';
+import AdUnit from '../components/AdUnit';
 import './HomePage.css';
 
 export default function HomePage() {
@@ -124,6 +125,16 @@ export default function HomePage() {
                     </motion.div>
                 </div>
             </motion.div>
+
+            {/* Ad Slot: Homepage Middle - Between Hero and Services */}
+            <div className="container">
+                <AdUnit
+                    slot="1078591290"
+                    format="auto"
+                    responsive="true"
+                    style={{ margin: '40px 0' }}
+                />
+            </div>
 
             {/* Services Pricing Section */}
             {services.length > 0 && (

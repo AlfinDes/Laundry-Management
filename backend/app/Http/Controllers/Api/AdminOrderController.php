@@ -90,7 +90,14 @@ class AdminOrderController extends Controller
             'payment_status' => 'sometimes|in:unpaid,paid',
         ]);
 
-        $order->update($validated);
+        $order->fill($validated);
+
+        // Auto-calculate price if weight or items changed and no specific price was provided
+        if (($request->has('weight') || $request->has('items')) && !$request->has('total_price')) {
+            $order->total_price = $order->calculatePrice();
+        }
+
+        $order->save();
 
         return response()->json([
             'success' => true,

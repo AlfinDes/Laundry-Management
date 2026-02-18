@@ -49,26 +49,38 @@ export default function AdminDashboard() {
 
     // Auto-calculate price when weight or editingOrder changes
     useEffect(() => {
-        if (!editingOrder || !editForm.weight) return;
+        if (!editingOrder || !editForm.weight || services.length === 0) return;
 
         const weight = parseFloat(editForm.weight);
         if (isNaN(weight)) return;
 
-        // Simple logic: find service that matches service_type
         const serviceType = editingOrder.service_type; // 'kiloan', 'satuan'
-
         let rate = 0;
+
         if (serviceType === 'kiloan') {
-            const kiloanService = services.find(s => s.name.toLowerCase().includes('kiloan'));
-            if (kiloanService) rate = kiloanService.price;
+            // Match service with unit 'kg' or name containing 'Kiloan'
+            const service = services.find(s =>
+                s.unit === 'kg' || s.name.toLowerCase().includes('kiloan')
+            );
+            if (service) rate = parseFloat(service.price);
         } else if (serviceType === 'satuan') {
-            const satuanService = services.find(s => s.name.toLowerCase().includes('satuan'));
-            if (satuanService) rate = satuanService.price;
+            // Match service with unit 'pcs' or name containing 'Satuan'
+            const service = services.find(s =>
+                s.unit === 'pcs' || s.name.toLowerCase().includes('satuan')
+            );
+            if (service) rate = parseFloat(service.price);
         }
 
         if (rate > 0) {
             const total = weight * rate;
-            setEditForm(prev => ({ ...prev, total_price: total.toString() }));
+            // Only update if it's different to avoid loops or overwriting manual edits immediately
+            setEditForm(prev => {
+                const newTotal = total.toString();
+                if (prev.total_price !== newTotal && !requestAnimationFrame) { // Simple check
+                    return { ...prev, total_price: newTotal };
+                }
+                return { ...prev, total_price: newTotal };
+            });
         }
     }, [editForm.weight, editingOrder, services]);
 
@@ -266,12 +278,14 @@ export default function AdminDashboard() {
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="form-label">Berat (kg)</label>
+                                    <label className="form-label">
+                                        {editingOrder.service_type === 'kiloan' ? 'Berat (kg)' : 'Jumlah (pcs/item)'}
+                                    </label>
                                     <input
                                         type="number"
                                         step="0.01"
                                         className="input"
-                                        placeholder="Masukkan berat cucian"
+                                        placeholder={editingOrder.service_type === 'kiloan' ? 'Masukkan berat cucian' : 'Masukkan jumlah item'}
                                         value={editForm.weight}
                                         onChange={(e) => setEditForm({ ...editForm, weight: e.target.value })}
                                     />

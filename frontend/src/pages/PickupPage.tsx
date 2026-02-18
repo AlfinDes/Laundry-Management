@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { publicAPI } from '../services/api';
 import { saveOrder } from '../utils/orderHistory';
-import ThemeToggle from '../components/ThemeToggle';
 import './PickupPage.css';
 
 export default function PickupPage() {
@@ -39,7 +38,6 @@ export default function PickupPage() {
 
     return (
         <div className="pickup-page">
-            <ThemeToggle />
             <div className="container">
                 <motion.div
                     className="pickup-form-container"

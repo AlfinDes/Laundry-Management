@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import { publicAPI } from '../services/api';
 import { Order } from '../types';
-import ThemeToggle from '../components/ThemeToggle';
+import AdUnit from '../components/AdUnit';
 import './TrackingPage.css';
 
 export default function TrackingPage() {
@@ -77,7 +77,6 @@ export default function TrackingPage() {
 
     return (
         <div className="tracking-page">
-            <ThemeToggle />
             <div className="container">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -113,6 +112,15 @@ export default function TrackingPage() {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Ad Slot: Below Stepper - Recommended for high visibility */}
+                        <AdUnit
+                            slot="1078591290"
+                            format="auto"
+                            responsive="true"
+                            style={{ margin: '30px 0' }}
+                            className="ad-tracking-page"
+                        />
 
                         <div className="order-details">
                             <h3>Detail Pesanan</h3>

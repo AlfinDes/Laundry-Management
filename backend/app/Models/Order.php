@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Service;
 
 class Order extends Model
 {
@@ -51,5 +52,30 @@ class Order extends Model
 
         // Format: DDMMYY-XXX (e.g., 090226-001)
         return sprintf('%s-%03d', $datePrefix, $newNumber);
+    }
+
+    /**
+     * Calculate total price based on service type and data
+     */
+    public function calculatePrice(): float
+    {
+        if ($this->service_type === 'kiloan') {
+            // Get price from services table or default to 7000
+            $service = Service::where('name', 'Cuci Kiloan')->first();
+            $pricePerKg = $service ? (float) $service->price : 7000.0;
+            return (float) ($this->weight * $pricePerKg);
+        }
+
+        if ($this->service_type === 'satuan' && is_array($this->items)) {
+            $total = 0;
+            foreach ($this->items as $item) {
+                $price = isset($item['price']) ? (float) $item['price'] : 0.0;
+                $qty = isset($item['qty']) ? (int) $item['qty'] : 1;
+                $total += ($price * $qty);
+            }
+            return (float) $total;
+        }
+
+        return (float) ($this->total_price ?: 0.0);
     }
 }
