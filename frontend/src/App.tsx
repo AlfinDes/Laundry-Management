@@ -4,6 +4,7 @@ import CustomerLayout from './components/CustomerLayout';
 import HomePage from './pages/HomePage';
 import PickupPage from './pages/PickupPage';
 import TrackingPage from './pages/TrackingPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import SettingsPage from './pages/admin/SettingsPage';
@@ -20,6 +21,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/pickup" element={<PickupPage />} />
             <Route path="/track/:trackingId" element={<TrackingPage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
           </Route>
 
           {/* Admin Routes */}

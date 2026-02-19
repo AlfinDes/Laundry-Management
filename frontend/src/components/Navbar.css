@@ -314,6 +314,26 @@
     flex-shrink: 0;
 }
 
+/* Drawer Footer (Privacy Policy) */
+.drawer-footer {
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.privacy-link {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--transition-base);
+}
+
+.privacy-link:hover {
+    color: var(--color-primary);
+}
+
 /* Dark Mode */
 .dark-mode .customer-navbar.scrolled {
     background: hsla(220, 15%, 10%, 0.85);

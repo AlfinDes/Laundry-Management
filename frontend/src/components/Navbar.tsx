@@ -188,6 +188,11 @@ export default function Navbar() {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Footer with Privacy Policy link */}
+                            <div className="drawer-footer">
+                                <Link to="/privacy" className="privacy-link">Kebijakan Privasi</Link>
+                            </div>
                         </motion.div>
                     </>
                 )}
