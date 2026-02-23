@@ -6,6 +6,7 @@ import ShopPage from './pages/ShopPage';
 import PickupPage from './pages/PickupPage';
 import TrackingPage from './pages/TrackingPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminRegister from './pages/admin/AdminRegister';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -24,6 +25,7 @@ function App() {
             <Route path="/pickup" element={<PickupPage />} />
             <Route path="/track/:trackingId" element={<TrackingPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsOfServicePage />} />
           </Route>
 
           {/* Shop page - unique URL per owner */}
