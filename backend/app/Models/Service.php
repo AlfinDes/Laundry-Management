@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Service extends Model
 {
     protected $fillable = [
+        'admin_id',
         'name',
         'price',
         'unit',
@@ -17,4 +18,9 @@ class Service extends Model
         'price' => 'decimal:2',
         'is_active' => 'boolean',
     ];
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
 }

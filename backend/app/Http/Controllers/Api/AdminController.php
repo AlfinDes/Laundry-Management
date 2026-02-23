@@ -11,6 +11,43 @@ use Illuminate\Validation\ValidationException;
 class AdminController extends Controller
 {
     /**
+     * Admin registration
+     */
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:admins,username|regex:/^[a-z0-9\-]+$/',
+            'password' => 'required|string|min:6|confirmed',
+        ], [
+            'username.regex' => 'Username hanya boleh huruf kecil, angka, dan tanda hubung (-).',
+            'username.unique' => 'Username sudah digunakan.',
+        ]);
+
+        $admin = Admin::create([
+            'name' => $request->name,
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Create token
+        $token = $admin->createToken('admin-token')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Registrasi berhasil',
+            'data' => [
+                'admin' => [
+                    'id' => $admin->id,
+                    'name' => $admin->name,
+                    'username' => $admin->username,
+                ],
+                'token' => $token,
+            ]
+        ], 201);
+    }
+
+    /**
      * Admin login
      */
     public function login(Request $request)
@@ -20,27 +57,11 @@ class AdminController extends Controller
             'password' => 'required|string',
         ]);
 
-        \Log::info('Production Login attempt', [
-            'username' => $request->username,
-            'password_provided_length' => strlen($request->password),
-        ]);
-
         $admin = Admin::where('username', $request->username)->first();
 
-        if ($admin) {
-            $check = \Illuminate\Support\Facades\Hash::check($request->password, $admin->password);
-            \Log::info('Admin found in production', [
-                'username' => $admin->username,
-                'password_check' => $check ? 'success' : 'failed',
-                'hash_start' => substr($admin->password, 0, 10)
-            ]);
-        } else {
-            \Log::info('Admin NOT found in production', ['username' => $request->username]);
-        }
-
-        if (!$admin || !\Illuminate\Support\Facades\Hash::check($request->password, $admin->password)) {
+        if (!$admin || !Hash::check($request->password, $admin->password)) {
             throw ValidationException::withMessages([
-                'username' => ['The provided credentials are incorrect.'],
+                'username' => ['Username atau password salah.'],
             ]);
         }
 
@@ -85,6 +106,34 @@ class AdminController extends Controller
                 'id' => $request->user()->id,
                 'name' => $request->user()->name,
                 'username' => $request->user()->username,
+            ]
+        ]);
+    }
+
+    /**
+     * Get admin info by username (public - for shop page)
+     */
+    public function getByUsername($username)
+    {
+        $admin = Admin::where('username', $username)->first();
+
+        if (!$admin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Laundry tidak ditemukan'
+            ], 404);
+        }
+
+        // Get public settings for this admin
+        $settings = $admin->settings()->pluck('value', 'key');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $admin->id,
+                'name' => $admin->name,
+                'username' => $admin->username,
+                'settings' => $settings,
             ]
         ]);
     }

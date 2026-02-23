@@ -2,10 +2,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import CustomerLayout from './components/CustomerLayout';
 import HomePage from './pages/HomePage';
+import ShopPage from './pages/ShopPage';
 import PickupPage from './pages/PickupPage';
 import TrackingPage from './pages/TrackingPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import AdminLogin from './pages/admin/AdminLogin';
+import AdminRegister from './pages/admin/AdminRegister';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import SettingsPage from './pages/admin/SettingsPage';
 import ServicesPage from './pages/admin/ServicesPage';
@@ -24,8 +26,12 @@ function App() {
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
           </Route>
 
+          {/* Shop page - unique URL per owner */}
+          <Route path="/s/:username" element={<ShopPage />} />
+
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/register" element={<AdminRegister />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/services" element={<ServicesPage />} />
           <Route path="/admin/settings" element={<SettingsPage />} />

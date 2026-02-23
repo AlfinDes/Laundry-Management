@@ -9,11 +9,18 @@ use Illuminate\Http\Request;
 class ServiceController extends Controller
 {
     /**
-     * Get all services (public)
+     * Get all active services (public - requires admin_id query param)
      */
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::where('is_active', true)->get();
+        $query = Service::where('is_active', true);
+
+        // If admin_id is provided, scope to that admin
+        if ($request->has('admin_id')) {
+            $query->where('admin_id', $request->admin_id);
+        }
+
+        $services = $query->get();
         return response()->json([
             'success' => true,
             'data' => $services
@@ -21,11 +28,14 @@ class ServiceController extends Controller
     }
 
     /**
-     * Get all services including inactive (admin)
+     * Get all services including inactive (admin - scoped)
      */
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
-        $services = Service::orderBy('created_at', 'desc')->get();
+        $services = Service::where('admin_id', $request->user()->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return response()->json([
             'success' => true,
             'data' => $services
@@ -33,7 +43,7 @@ class ServiceController extends Controller
     }
 
     /**
-     * Create new service (admin)
+     * Create new service (admin - scoped)
      */
     public function store(Request $request)
     {
@@ -44,6 +54,7 @@ class ServiceController extends Controller
             'is_active' => 'boolean',
         ]);
 
+        $validated['admin_id'] = $request->user()->id;
         $service = Service::create($validated);
 
         return response()->json([
@@ -54,11 +65,11 @@ class ServiceController extends Controller
     }
 
     /**
-     * Update service (admin)
+     * Update service (admin - scoped)
      */
     public function update(Request $request, $id)
     {
-        $service = Service::find($id);
+        $service = Service::where('admin_id', $request->user()->id)->find($id);
 
         if (!$service) {
             return response()->json([
@@ -84,11 +95,11 @@ class ServiceController extends Controller
     }
 
     /**
-     * Delete service (admin)
+     * Delete service (admin - scoped)
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $service = Service::find($id);
+        $service = Service::where('admin_id', $request->user()->id)->find($id);
 
         if (!$service) {
             return response()->json([

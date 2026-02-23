@@ -2,24 +2,51 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Admin;
+use App\Models\Service;
+use App\Models\Setting;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        \Log::info('Running AdminSeeder...');
-        \App\Models\Admin::updateOrCreate(
+        // Create default admin
+        $admin = Admin::updateOrCreate(
             ['username' => 'admin'],
             [
-                'name' => 'Super Admin',
-                'password' => \Illuminate\Support\Facades\Hash::make('admin123'),
+                'name' => 'Premium Laundry',
+                'password' => Hash::make('admin123'),
             ]
         );
-        \Log::info('AdminSeeder completed.');
+
+        // Create default services for this admin
+        $services = [
+            ['name' => 'Cuci Kiloan', 'price' => 7000, 'unit' => 'kg', 'is_active' => true],
+            ['name' => 'Cuci Satuan (Kemeja)', 'price' => 15000, 'unit' => 'pcs', 'is_active' => true],
+            ['name' => 'Cuci Satuan (Celana)', 'price' => 12000, 'unit' => 'pcs', 'is_active' => true],
+            ['name' => 'Cuci Selimut', 'price' => 25000, 'unit' => 'pcs', 'is_active' => true],
+        ];
+
+        foreach ($services as $service) {
+            Service::updateOrCreate(
+                ['admin_id' => $admin->id, 'name' => $service['name']],
+                $service + ['admin_id' => $admin->id]
+            );
+        }
+
+        // Create default settings for this admin
+        $settings = [
+            'laundry_name' => 'Premium Laundry',
+            'whatsapp_number' => '628123456789',
+        ];
+
+        foreach ($settings as $key => $value) {
+            Setting::updateOrCreate(
+                ['admin_id' => $admin->id, 'key' => $key],
+                ['value' => $value]
+            );
+        }
     }
 }

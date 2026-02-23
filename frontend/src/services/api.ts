@@ -21,8 +21,9 @@ api.interceptors.request.use((config) => {
 
 // Public API
 export const publicAPI = {
-    // Create pickup request
+    // Create pickup request (now requires admin_id)
     createOrder: (data: {
+        admin_id: number;
         customer_name: string;
         customer_address: string;
         customer_phone: string;
@@ -33,11 +34,17 @@ export const publicAPI = {
     // Track order by tracking ID
     trackOrder: (trackingId: string) => api.get(`/orders/${trackingId}`),
 
-    // Get business settings (public)
-    getSettings: () => api.get('/settings'),
+    // Get business settings (public, optionally scoped by admin_id)
+    getSettings: (adminId?: number) => api.get('/settings', { params: adminId ? { admin_id: adminId } : {} }),
 
-    // Get active services (public)
-    getServices: () => api.get('/services'),
+    // Get active services (public, optionally scoped by admin_id)
+    getServices: (adminId?: number) => api.get('/services', { params: adminId ? { admin_id: adminId } : {} }),
+
+    // Get shop info by username
+    getShopByUsername: (username: string) => api.get(`/shop/${username}`),
+
+    // Get services for a specific shop
+    getShopServices: (adminId: number) => api.get(`/shop/${adminId}/services`),
 };
 
 // Admin API
@@ -45,6 +52,9 @@ export const adminAPI = {
     // Authentication
     login: (credentials: { username: string; password: string }) =>
         api.post('/admin/login', credentials),
+
+    register: (data: { name: string; username: string; password: string; password_confirmation: string }) =>
+        api.post('/admin/register', data),
 
     logout: () => api.post('/admin/logout'),
 

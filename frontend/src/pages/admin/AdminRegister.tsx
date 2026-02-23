@@ -4,9 +4,14 @@ import { motion } from 'framer-motion';
 import { adminAPI } from '../../services/api';
 import './AdminLogin.css';
 
-export default function AdminLogin() {
+export default function AdminRegister() {
     const navigate = useNavigate();
-    const [credentials, setCredentials] = useState({ username: '', password: '' });
+    const [formData, setFormData] = useState({
+        name: '',
+        username: '',
+        password: '',
+        password_confirmation: '',
+    });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -16,14 +21,26 @@ export default function AdminLogin() {
         setLoading(true);
         setError('');
 
+        if (formData.password !== formData.password_confirmation) {
+            setError('Password dan konfirmasi password tidak cocok.');
+            setLoading(false);
+            return;
+        }
+
         try {
-            const response = await adminAPI.login(credentials);
+            const response = await adminAPI.register(formData);
             localStorage.setItem('admin_token', response.data.data.token);
             localStorage.setItem('admin_name', response.data.data.admin.name);
             localStorage.setItem('admin_data', JSON.stringify(response.data.data.admin));
             navigate('/admin');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Login gagal. Periksa username dan password Anda.');
+            const errors = err.response?.data?.errors;
+            if (errors) {
+                const firstError = Object.values(errors).flat()[0] as string;
+                setError(firstError);
+            } else {
+                setError(err.response?.data?.message || 'Registrasi gagal. Silakan coba lagi.');
+            }
         } finally {
             setLoading(false);
         }
@@ -39,8 +56,8 @@ export default function AdminLogin() {
             >
                 <div className="glass-card">
                     <div className="login-header">
-                        <h1>Admin Login</h1>
-                        <p className="text-secondary">Masuk untuk mengelola pesanan</p>
+                        <h1>Daftar Admin</h1>
+                        <p className="text-secondary">Buat akun untuk mengelola laundry Anda</p>
                     </div>
 
                     {error && (
@@ -51,15 +68,30 @@ export default function AdminLogin() {
 
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label className="form-label">Username</label>
+                            <label className="form-label">Nama Laundry / Pemilik</label>
                             <input
                                 type="text"
                                 className="input"
-                                placeholder="Masukkan username"
-                                value={credentials.username}
-                                onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                                placeholder="Contoh: Berkah Laundry"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 required
                             />
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">Username (untuk link toko)</label>
+                            <input
+                                type="text"
+                                className="input"
+                                placeholder="contoh: berkah-laundry"
+                                value={formData.username}
+                                onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase().replace(/[^a-z0-9\-]/g, '') })}
+                                required
+                            />
+                            <small className="help-text">
+                                Link toko Anda: <strong>laundryku.fun/s/{formData.username || '...'}</strong>
+                            </small>
                         </div>
 
                         <div className="form-group">
@@ -68,10 +100,11 @@ export default function AdminLogin() {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     className="input"
-                                    placeholder="••••••••"
-                                    value={credentials.password}
-                                    onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                                    placeholder="Minimal 6 karakter"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     required
+                                    minLength={6}
                                 />
                                 <button
                                     type="button"
@@ -94,14 +127,27 @@ export default function AdminLogin() {
                             </div>
                         </div>
 
+                        <div className="form-group">
+                            <label className="form-label">Konfirmasi Password</label>
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                className="input"
+                                placeholder="Ulangi password"
+                                value={formData.password_confirmation}
+                                onChange={(e) => setFormData({ ...formData, password_confirmation: e.target.value })}
+                                required
+                                minLength={6}
+                            />
+                        </div>
+
                         <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-                            {loading ? 'Memproses...' : 'Login'}
+                            {loading ? 'Memproses...' : 'Daftar Sekarang'}
                         </button>
                     </form>
 
                     <div className="register-link" style={{ textAlign: 'center', marginTop: '1rem' }}>
                         <p className="text-secondary">
-                            Belum punya akun? <Link to="/admin/register" style={{ color: 'var(--primary)' }}>Daftar di sini</Link>
+                            Sudah punya akun? <Link to="/admin/login" style={{ color: 'var(--primary)' }}>Login di sini</Link>
                         </p>
                     </div>
                 </div>

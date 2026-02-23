@@ -4,16 +4,20 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Admin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AdminOrderController extends Controller
 {
     /**
-     * Get all orders with optional filters
+     * Get all orders for the authenticated admin with optional filters
      */
     public function index(Request $request)
     {
-        $query = Order::query();
+        $adminId = $request->user()->id;
+        $query = Order::where('admin_id', $adminId);
 
         // Filter by status
         if ($request->has('status')) {
@@ -49,11 +53,11 @@ class AdminOrderController extends Controller
     }
 
     /**
-     * Get single order details
+     * Get single order details (scoped to authenticated admin)
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $order = Order::find($id);
+        $order = Order::where('admin_id', $request->user()->id)->find($id);
 
         if (!$order) {
             return response()->json([
@@ -69,11 +73,11 @@ class AdminOrderController extends Controller
     }
 
     /**
-     * Update order (status, weight, items, price)
+     * Update order (status, weight, items, price) - scoped to authenticated admin
      */
     public function update(Request $request, $id)
     {
-        $order = Order::find($id);
+        $order = Order::where('admin_id', $request->user()->id)->find($id);
 
         if (!$order) {
             return response()->json([
@@ -90,6 +94,7 @@ class AdminOrderController extends Controller
             'payment_status' => 'sometimes|in:unpaid,paid',
         ]);
 
+        $oldStatus = $order->status;
         $order->fill($validated);
 
         // Auto-calculate price if weight or items changed and no specific price was provided
@@ -99,6 +104,11 @@ class AdminOrderController extends Controller
 
         $order->save();
 
+        // Send WhatsApp notification if status changed to completed
+        if ($oldStatus !== 'completed' && $order->status === 'completed') {
+            $this->sendWhatsAppNotification($order);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Order updated successfully',
@@ -107,11 +117,11 @@ class AdminOrderController extends Controller
     }
 
     /**
-     * Delete/Archive order
+     * Delete/Archive order (scoped to authenticated admin)
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $order = Order::find($id);
+        $order = Order::where('admin_id', $request->user()->id)->find($id);
 
         if (!$order) {
             return response()->json([
@@ -129,15 +139,17 @@ class AdminOrderController extends Controller
     }
 
     /**
-     * Get dashboard statistics
+     * Get dashboard statistics (scoped to authenticated admin)
      */
-    public function stats()
+    public function stats(Request $request)
     {
-        $totalOrders = Order::count();
-        $activeOrders = Order::whereIn('status', ['pending', 'picked_up', 'washing', 'ironing'])->count();
-        $completedOrders = Order::where('status', 'completed')->count();
-        $totalRevenue = Order::where('payment_status', 'paid')->sum('total_price');
-        $pendingPickups = Order::where('status', 'pending')->where('order_type', 'pickup')->count();
+        $adminId = $request->user()->id;
+
+        $totalOrders = Order::where('admin_id', $adminId)->count();
+        $activeOrders = Order::where('admin_id', $adminId)->whereIn('status', ['pending', 'picked_up', 'washing', 'ironing'])->count();
+        $completedOrders = Order::where('admin_id', $adminId)->where('status', 'completed')->count();
+        $totalRevenue = Order::where('admin_id', $adminId)->where('payment_status', 'paid')->sum('total_price');
+        $pendingPickups = Order::where('admin_id', $adminId)->where('status', 'pending')->where('order_type', 'pickup')->count();
 
         return response()->json([
             'success' => true,
@@ -152,15 +164,72 @@ class AdminOrderController extends Controller
     }
 
     /**
-     * Reset/Delete all orders (Development use only)
+     * Reset/Delete all orders for the authenticated admin
      */
-    public function reset()
+    public function reset(Request $request)
     {
-        Order::truncate();
+        Order::where('admin_id', $request->user()->id)->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'All orders have been reset successfully'
         ]);
+    }
+
+    /**
+     * Send WhatsApp notification via Fonnte when order is completed
+     */
+    private function sendWhatsAppNotification(Order $order)
+    {
+        try {
+            $admin = Admin::find($order->admin_id);
+            if (!$admin)
+                return;
+
+            $fonnteToken = $admin->getSetting('fonnte_token');
+            if (!$fonnteToken) {
+                Log::info('Fonnte token not configured for admin: ' . $admin->id);
+                return;
+            }
+
+            $laundryName = $admin->getSetting('laundry_name', $admin->name);
+
+            $message = "Halo Kak {$order->customer_name}! 👋\n\n"
+                . "Pesanan laundry Anda sudah *SELESAI* ✅\n\n"
+                . "📋 Detail Pesanan:\n"
+                . "🔖 Kode: *{$order->tracking_id}*\n"
+                . "💰 Total: Rp " . number_format($order->total_price, 0, ',', '.') . "\n"
+                . "💳 Pembayaran: " . ($order->payment_status === 'paid' ? 'Lunas ✅' : 'Belum Bayar ❌') . "\n\n"
+                . "Silakan ambil cucian Anda atau tunggu pengiriman.\n"
+                . "Terima kasih telah menggunakan layanan *{$laundryName}*! 🙏";
+
+            // Format phone number for Fonnte (ensure starts with 62)
+            $phone = $order->customer_phone;
+            if (str_starts_with($phone, '0')) {
+                $phone = '62' . substr($phone, 1);
+            } elseif (str_starts_with($phone, '+')) {
+                $phone = substr($phone, 1);
+            }
+
+            $response = Http::withHeaders([
+                'Authorization' => $fonnteToken,
+            ])->post('https://api.fonnte.com/send', [
+                        'target' => $phone,
+                        'message' => $message,
+                    ]);
+
+            Log::info('Fonnte WA notification sent', [
+                'order_id' => $order->id,
+                'phone' => $phone,
+                'response_status' => $response->status(),
+                'response_body' => $response->json(),
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to send WhatsApp notification', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

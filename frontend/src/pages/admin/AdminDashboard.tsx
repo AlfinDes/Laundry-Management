@@ -47,40 +47,31 @@ export default function AdminDashboard() {
         }
     };
 
-    // Auto-calculate price when weight or editingOrder changes
+    // Auto-calculate price when weight changes
     useEffect(() => {
         if (!editingOrder || !editForm.weight || services.length === 0) return;
 
         const weight = parseFloat(editForm.weight);
-        if (isNaN(weight)) return;
+        if (isNaN(weight) || weight <= 0) return;
 
-        const serviceType = editingOrder.service_type; // 'kiloan', 'satuan'
+        const serviceType = editingOrder.service_type;
         let rate = 0;
 
         if (serviceType === 'kiloan') {
-            // Match service with unit 'kg' or name containing 'Kiloan'
-            const service = services.find(s =>
+            const service = services.find((s: any) =>
                 s.unit === 'kg' || s.name.toLowerCase().includes('kiloan')
             );
             if (service) rate = parseFloat(service.price);
         } else if (serviceType === 'satuan') {
-            // Match service with unit 'pcs' or name containing 'Satuan'
-            const service = services.find(s =>
+            const service = services.find((s: any) =>
                 s.unit === 'pcs' || s.name.toLowerCase().includes('satuan')
             );
             if (service) rate = parseFloat(service.price);
         }
 
         if (rate > 0) {
-            const total = weight * rate;
-            // Only update if it's different to avoid loops or overwriting manual edits immediately
-            setEditForm(prev => {
-                const newTotal = total.toString();
-                if (prev.total_price !== newTotal && !requestAnimationFrame) { // Simple check
-                    return { ...prev, total_price: newTotal };
-                }
-                return { ...prev, total_price: newTotal };
-            });
+            const total = Math.round(weight * rate);
+            setEditForm(prev => ({ ...prev, total_price: total.toString() }));
         }
     }, [editForm.weight, editingOrder, services]);
 

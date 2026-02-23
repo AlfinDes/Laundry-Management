@@ -7,14 +7,26 @@ import './SettingsPage.css';
 export default function SettingsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [adminUsername, setAdminUsername] = useState('');
     const [settings, setSettings] = useState({
         laundry_name: 'Premium Laundry',
         whatsapp_number: '628123456789',
+        fonnte_token: '',
     });
 
     useEffect(() => {
         fetchSettings();
+        fetchAdminInfo();
     }, []);
+
+    const fetchAdminInfo = async () => {
+        try {
+            const res = await adminAPI.getMe();
+            setAdminUsername(res.data.data.username);
+        } catch (error) {
+            console.error('Error fetching admin info:', error);
+        }
+    };
 
     const fetchSettings = async () => {
         try {
@@ -23,6 +35,7 @@ export default function SettingsPage() {
                 setSettings({
                     laundry_name: res.data.data.laundry_name || 'Premium Laundry',
                     whatsapp_number: res.data.data.whatsapp_number || '628123456789',
+                    fonnte_token: res.data.data.fonnte_token || '',
                 });
             }
         } catch (error) {
@@ -60,6 +73,13 @@ export default function SettingsPage() {
         }
     };
 
+    const shopUrl = `${window.location.origin}/s/${adminUsername}`;
+
+    const copyShopLink = () => {
+        navigator.clipboard.writeText(shopUrl);
+        alert('Link toko berhasil disalin!');
+    };
+
     if (loading) {
         return <AdminLayout><div className="loading">Loading...</div></AdminLayout>;
     }
@@ -71,10 +91,45 @@ export default function SettingsPage() {
                     <h1>Pengaturan Bisnis</h1>
                 </div>
 
+                {/* Shop Link Section */}
+                {adminUsername && (
+                    <motion.div
+                        className="settings-card shop-link-card"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-primary)' }}>🔗 Link Toko Anda</h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.75rem' }}>
+                            Bagikan link ini ke pelanggan Anda:
+                        </p>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <code style={{
+                                padding: '0.5rem 0.75rem',
+                                borderRadius: '8px',
+                                background: 'var(--bg-secondary)',
+                                color: 'var(--primary)',
+                                fontWeight: 600,
+                                fontSize: '0.9rem',
+                                flex: 1,
+                                minWidth: 0,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}>
+                                {shopUrl}
+                            </code>
+                            <button className="btn btn-primary btn-sm" onClick={copyShopLink}>
+                                Salin
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+
                 <motion.div
                     className="settings-card"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
                 >
                     <form onSubmit={handleSave}>
                         <div className="form-group">
@@ -103,6 +158,21 @@ export default function SettingsPage() {
                             <small className="help-text">Gunakan format 62 (tanpa tanda + atau spasi) untuk integrasi WhatsApp.</small>
                         </div>
 
+                        <div className="form-group">
+                            <label className="form-label">Fonnte API Token</label>
+                            <input
+                                type="text"
+                                className="input"
+                                value={settings.fonnte_token}
+                                onChange={(e) => setSettings({ ...settings, fonnte_token: e.target.value })}
+                                placeholder="Masukkan token dari dashboard Fonnte"
+                            />
+                            <small className="help-text">
+                                Token ini digunakan untuk mengirim notifikasi WhatsApp otomatis ke pelanggan saat pesanan selesai.
+                                Dapatkan token dari <a href="https://fonnte.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)' }}>fonnte.com</a>.
+                            </small>
+                        </div>
+
                         <div className="settings-footer">
                             <button
                                 type="submit"
@@ -121,7 +191,7 @@ export default function SettingsPage() {
                         className="danger-zone-card"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
+                        transition={{ delay: 0.2 }}
                     >
                         <div className="danger-item">
                             <div className="danger-info">

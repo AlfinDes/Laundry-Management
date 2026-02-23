@@ -14,8 +14,15 @@ Route::get('/orders/{tracking_id}', [OrderController::class, 'track']);
 Route::get('/settings', [SettingController::class, 'index']);
 Route::get('/services', [ServiceController::class, 'index']);
 
+// Public: get shop info by username (for /s/:username page)
+Route::get('/shop/{username}', [AdminController::class, 'getByUsername']);
+
+// Public: get services for a specific admin
+Route::get('/shop/{adminId}/services', [OrderController::class, 'getServicesByAdmin']);
+
 // Admin authentication (Public)
 Route::post('/admin/login', [AdminController::class, 'login']);
+Route::post('/admin/register', [AdminController::class, 'register']);
 
 // Protected endpoints (Admin)
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {

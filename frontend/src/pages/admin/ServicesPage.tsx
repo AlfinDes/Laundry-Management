@@ -144,6 +144,19 @@ export default function ServicesPage() {
                     ))}
                 </div>
 
+                {services.length === 0 && (
+                    <div className="glass-card" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📋</div>
+                        <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Belum Ada Layanan</h3>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                            Tambahkan layanan laundry pertama Anda agar pelanggan bisa melihat daftar harga.
+                        </p>
+                        <button className="btn btn-primary" onClick={handleCreate}>
+                            + Tambah Layanan Pertama
+                        </button>
+                    </div>
+                )}
+
                 {(editingService || isCreating) && (
                     <div className="modal-overlay" onClick={handleCancel}>
                         <div className="modal-content" onClick={(e) => e.stopPropagation()}>

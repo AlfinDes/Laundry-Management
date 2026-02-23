@@ -6,5 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
-    protected $fillable = ['key', 'value'];
+    protected $fillable = ['admin_id', 'key', 'value'];
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
 }

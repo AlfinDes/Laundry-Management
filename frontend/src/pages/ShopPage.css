@@ -1,0 +1,174 @@
+.shop-page {
+    min-height: 100vh;
+    padding: 2rem 0;
+    background: var(--bg-primary);
+}
+
+.shop-page .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Loading */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Not Found */
+.not-found-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    margin-top: 3rem;
+}
+
+.not-found-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.not-found-state h2 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.not-found-state p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+/* Shop Header */
+.shop-header {
+    text-align: center;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary, #6366f1));
+    color: white;
+}
+
+.shop-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.shop-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: white;
+}
+
+.shop-subtitle {
+    opacity: 0.9;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Services */
+.shop-services {
+    margin-bottom: 1.5rem;
+}
+
+.shop-services .section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.services-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+}
+
+.service-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.service-price {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 0.95rem;
+}
+
+.service-price small {
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+/* Order Form */
+.order-form-container {
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.order-form-container .form-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.order-form-container .form-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 500px) {
+    .shop-page .container {
+        padding: 0 0.75rem;
+    }
+
+    .shop-header {
+        padding: 1.5rem;
+    }
+
+    .shop-name {
+        font-size: 1.4rem;
+    }
+
+    .order-form-container {
+        padding: 1.25rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}

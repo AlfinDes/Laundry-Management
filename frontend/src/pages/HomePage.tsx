@@ -10,27 +10,47 @@ export default function HomePage() {
     const [trackingId, setTrackingId] = useState('');
     const [services, setServices] = useState<any[]>([]);
     const [settings, setSettings] = useState<Record<string, string>>({});
+    const [defaultAdmin, setDefaultAdmin] = useState<any>(null);
 
     useEffect(() => {
-        fetchSettings();
-        fetchServices();
+        fetchShopData();
     }, []);
 
-    const fetchSettings = async () => {
+    const fetchShopData = async () => {
         try {
-            const res = await publicAPI.getSettings();
-            setSettings(res.data.data || {});
-        } catch (error) {
-            console.error('Error fetching settings:', error);
-        }
-    };
+            // Try to get the admin info from localStorage (set at login)
+            const adminData = localStorage.getItem('admin_data');
+            let adminUsername = 'admin'; // default fallback
 
-    const fetchServices = async () => {
-        try {
-            const res = await publicAPI.getServices();
-            setServices(res.data.data || []);
+            if (adminData) {
+                try {
+                    const parsed = JSON.parse(adminData);
+                    if (parsed.username) {
+                        adminUsername = parsed.username;
+                    }
+                } catch { }
+            }
+
+            // Fetch the admin shop info
+            const res = await publicAPI.getShopByUsername(adminUsername);
+            const shopData = res.data.data;
+            setDefaultAdmin(shopData);
+            setSettings(shopData.settings || {});
+
+            // Fetch services for this admin
+            const servicesRes = await publicAPI.getShopServices(shopData.id);
+            setServices(servicesRes.data.data || []);
         } catch (error) {
-            console.error('Error fetching services:', error);
+            console.error('Error fetching shop info:', error);
+            // Fallback: try fetching without admin scope
+            try {
+                const res = await publicAPI.getSettings();
+                setSettings(res.data.data || {});
+                const svcRes = await publicAPI.getServices();
+                setServices(svcRes.data.data || []);
+            } catch (err) {
+                console.error('Error in fallback fetch:', err);
+            }
         }
     };
 
@@ -40,6 +60,8 @@ export default function HomePage() {
             navigate(`/track/${trackingId.trim()}`);
         }
     };
+
+    const shopLink = defaultAdmin ? `/s/${defaultAdmin.username}` : '/pickup';
 
     return (
         <div className="home-page">
@@ -66,7 +88,7 @@ export default function HomePage() {
                         </p>
 
                         <div className="cta-buttons">
-                            <Link to="/pickup" className="btn btn-primary btn-lg">
+                            <Link to={shopLink} className="btn btn-primary btn-lg">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                                     <path d="M10 5V15M5 10H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                                 </svg>

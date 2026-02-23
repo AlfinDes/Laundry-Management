@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { publicAPI } from '../services/api';
 import { saveOrder } from '../utils/orderHistory';
@@ -7,7 +7,9 @@ import './PickupPage.css';
 
 export default function PickupPage() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [loading, setLoading] = useState(false);
+    const adminId = searchParams.get('admin_id');
     const [formData, setFormData] = useState({
         customer_name: '',
         customer_address: '',
@@ -16,12 +18,23 @@ export default function PickupPage() {
         order_type: 'pickup',
     });
 
+    useEffect(() => {
+        // If no admin_id in URL, redirect to home
+        if (!adminId) {
+            navigate('/');
+        }
+    }, [adminId, navigate]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!adminId) return;
         setLoading(true);
 
         try {
-            const response = await publicAPI.createOrder(formData);
+            const response = await publicAPI.createOrder({
+                admin_id: parseInt(adminId),
+                ...formData,
+            });
             const trackingId = response.data.data.tracking_id;
 
             // Save to order history
@@ -35,6 +48,8 @@ export default function PickupPage() {
             setLoading(false);
         }
     };
+
+    if (!adminId) return null;
 
     return (
         <div className="pickup-page">

@@ -4,17 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
     /**
-     * Create a new pickup request
+     * Create a new pickup request (customer-facing, requires admin_id)
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'admin_id' => 'required|exists:admins,id',
             'customer_name' => 'required|string|max:255',
             'customer_address' => 'required|string',
             'customer_phone' => 'required|string|max:20',
@@ -25,6 +27,7 @@ class OrderController extends Controller
         // Generate unique tracking ID with format DDMMYY-XXX
         $order = Order::create([
             'tracking_id' => Order::generateTrackingId(),
+            'admin_id' => $validated['admin_id'],
             'customer_name' => $validated['customer_name'],
             'customer_address' => $validated['customer_address'],
             'customer_phone' => $validated['customer_phone'],
@@ -80,4 +83,23 @@ class OrderController extends Controller
         ]);
     }
 
+    /**
+     * Get services for a specific admin (public, for customer order page)
+     */
+    public function getServicesByAdmin($adminId)
+    {
+        $admin = Admin::find($adminId);
+        if (!$admin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Laundry tidak ditemukan'
+            ], 404);
+        }
+
+        $services = $admin->services()->where('is_active', true)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $services
+        ]);
+    }
 }

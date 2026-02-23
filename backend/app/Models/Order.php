@@ -9,6 +9,7 @@ class Order extends Model
 {
     protected $fillable = [
         'tracking_id',
+        'admin_id',
         'customer_name',
         'customer_address',
         'customer_phone',
@@ -26,6 +27,11 @@ class Order extends Model
         'weight' => 'decimal:2',
         'total_price' => 'decimal:2',
     ];
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
 
     /**
      * Generate unique tracking ID with format DDMMYY-XXX
@@ -60,8 +66,12 @@ class Order extends Model
     public function calculatePrice(): float
     {
         if ($this->service_type === 'kiloan') {
-            // Get price from services table or default to 7000
-            $service = Service::where('name', 'Cuci Kiloan')->first();
+            // Get price from services table for this admin or default to 7000
+            $query = Service::where('name', 'Cuci Kiloan');
+            if ($this->admin_id) {
+                $query->where('admin_id', $this->admin_id);
+            }
+            $service = $query->first();
             $pricePerKg = $service ? (float) $service->price : 7000.0;
             return (float) ($this->weight * $pricePerKg);
         }
