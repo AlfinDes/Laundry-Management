@@ -67,6 +67,7 @@ class OrderController extends Controller
             'success' => true,
             'data' => [
                 'tracking_id' => $order->tracking_id,
+                'admin_id' => $order->admin_id,
                 'customer_name' => $order->customer_name,
                 'customer_address' => $order->customer_address,
                 'customer_phone' => $order->customer_phone,

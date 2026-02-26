@@ -1,6 +1,7 @@
 export interface Order {
     id: number;
     tracking_id: string;
+    admin_id: number;
     customer_name: string;
     customer_address: string;
     customer_phone: string;

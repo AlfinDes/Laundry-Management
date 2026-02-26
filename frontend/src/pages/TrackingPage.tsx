@@ -22,12 +22,14 @@ export default function TrackingPage() {
 
     const fetchData = async () => {
         try {
-            const [orderRes, settingsRes] = await Promise.all([
-                publicAPI.trackOrder(trackingId!),
-                publicAPI.getSettings(),
-            ]);
-            setOrder(orderRes.data.data);
-            setSettings(settingsRes.data.data || {});
+            const orderRes = await publicAPI.trackOrder(trackingId!);
+            const orderData = orderRes.data.data;
+            setOrder(orderData);
+
+            if (orderData.admin_id) {
+                const settingsRes = await publicAPI.getSettings(orderData.admin_id);
+                setSettings(settingsRes.data.data || {});
+            }
         } catch (err) {
             setError('Order tidak ditemukan');
         } finally {
